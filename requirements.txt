@@ -1,0 +1,13 @@
+# llama3.2 model to be downloaded via ollama 
+# ollama pull nomic-embed-text - For open source encoding model
+pdfplumber
+prompt_toolkit
+langchain 
+langchain_community
+chromadb
+sentence-transformers
+huggingface-hub
+streamlit 
+streamlit_chat 
+
+transformers
