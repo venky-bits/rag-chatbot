@@ -15,8 +15,10 @@ from sentence_transformers import CrossEncoder, SentenceTransformer
 
 # LangChain and related imports (should be last)
 from langchain_community.llms import Ollama
+import ollama
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from langchain.chains import LLMChain
 
 torch.classes.__path__ = [os.path.join(torch.__path__[0], torch.classes.__file__)] 
 
@@ -127,7 +129,7 @@ def create_embeddings():
     return collection
     
 # Function to initialize the prompt LLM chain
-def initPromptLLM():
+def initPromptLLM_old():
     # Define the prompt template
     template = """
     Answer the question based on the context below. If you can't
@@ -145,6 +147,30 @@ def initPromptLLM():
     parser = StrOutputParser()
 
     chain = prompt | model | parser
+
+    return chain
+
+def initPromptLLM():
+    # Define the prompt template
+    template = """
+    Answer the question based on the context below. If you can't
+    answer the question within the context provided, reply "I don't know". Do not try to answer outside the context provided.
+
+    Context: {context}
+
+    Question: {question}
+    """
+
+    prompt = PromptTemplate.from_template(template)
+
+    # Initialize Ollama client-based model
+    ollama_client = Ollama(model="llama3.2", base_url="http://34.44.184.36:11434")
+
+    # Initialize output parser
+    parser = StrOutputParser()
+
+    # Create LLM chain
+    chain = LLMChain(llm=ollama_client, prompt=prompt, output_parser=parser)
 
     return chain
 
@@ -204,7 +230,9 @@ if user_input:
     # Generate response using the LLM chain
     response = st.session_state.chain.invoke({"context": final_results, "question": user_input})
     
-    print("response before guard rail: ", response)
+    print("response before guard rail: ", response['text'])
+
+    response = response['text']
     
     # GUARD RAIL IMPLEMENTATION - OUTPUT GUARD RAIL
     # Output guard rail to prevent hallucination or misleading information
