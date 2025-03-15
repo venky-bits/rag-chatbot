@@ -13,4 +13,5 @@ streamlit_chat
 transformers
 ollama
 
+
 accelerate>=0.26.0
