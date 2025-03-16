@@ -1,0 +1,10 @@
+{
+    "redirects": [
+      {
+        "source": "/",
+        "destination": "http://34.29.203.130:8502/",
+        "permanent": true
+      }
+    ]
+  }
+  
